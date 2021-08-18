@@ -1,7 +1,10 @@
-﻿@{
-    var errors = ExternalAuthorizerHelper.RetrieveErrorsToDisplay();
+﻿@using Nop.Services.Authentication.External
+
+@{
+    var errors = Context.Session.RetrieveErrorsToDisplay();
 }
-@using Nop.Services.Authentication.External
+@using Microsoft.AspNetCore.Http
+@using Nop.Services.Html
 @if (errors != null && errors.Count > 0)
 {
     <div class="external-auth-errors">

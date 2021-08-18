@@ -6,8 +6,8 @@ using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
-using Nop.Core.Html;
 using Nop.Services.Directory;
+using Nop.Services.Html;
 using Nop.Services.Localization;
 using Nop.Services.Media;
 using Nop.Services.Tax;
@@ -23,6 +23,7 @@ namespace Nop.Services.Catalog
 
         private readonly ICurrencyService _currencyService;
         private readonly IDownloadService _downloadService;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly ILocalizationService _localizationService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
@@ -39,6 +40,7 @@ namespace Nop.Services.Catalog
 
         public ProductAttributeFormatter(ICurrencyService currencyService,
             IDownloadService downloadService,
+            IHtmlHelper htmlHelper,
             ILocalizationService localizationService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
@@ -51,6 +53,7 @@ namespace Nop.Services.Catalog
         {
             _currencyService = currencyService;
             _downloadService = downloadService;
+            _htmlHelper = htmlHelper;
             _localizationService = localizationService;
             _priceCalculationService = priceCalculationService;
             _priceFormatter = priceFormatter;
@@ -125,7 +128,7 @@ namespace Nop.Services.Catalog
                                     attributeName = WebUtility.HtmlEncode(attributeName);
 
                                 //we never encode multiline textbox input
-                                formattedAttribute = $"{attributeName}: {HtmlHelper.FormatText(value, false, true, false, false, false, false)}";
+                                formattedAttribute = $"{attributeName}: {_htmlHelper.FormatText(value, false, true, false, false, false, false)}";
                             }
                             else if (attribute.AttributeControlType == AttributeControlType.FileUpload)
                             {

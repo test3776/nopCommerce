@@ -1,17 +1,33 @@
-﻿using System;
+﻿﻿using System;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Nop.Core.Html
+namespace Nop.Services.Html
 {
     /// <summary>
     /// Represents a HTML helper
     /// </summary>
-    public partial class HtmlHelper
+    //TODO: the class need a refactoring
+    public partial class HtmlHelper : IHtmlHelper
     {
+        #region Filds
+
+        private readonly IBBCodeHelper _bbCodeHelper;
+
+        #endregion
+
+        #region Ctor
+
+        public HtmlHelper(IBBCodeHelper bbCodeHelper)
+        {
+            _bbCodeHelper = bbCodeHelper;
+        }
+
+        #endregion
+
         #region Utilities
 
-        private static string EnsureOnlyAllowedHtml(string text)
+        protected static string EnsureOnlyAllowedHtml(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
@@ -21,18 +37,16 @@ namespace Nop.Core.Html
             var m = Regex.Matches(text, "<.*?>", RegexOptions.IgnoreCase);
             for (var i = m.Count - 1; i >= 0; i--)
             {
-                var tag = text[(m[i].Index + 1)..(m[i].Index + m[i].Length)].Trim().ToLowerInvariant();
+                var tag = text[(m[i].Index + 1)..(m[i].Index + m[i].Length)].Trim().ToLower();
 
-                if (!IsValidTag(tag, allowedTags))
-                {
+                if (!IsValidTag(tag, allowedTags)) 
                     text = text.Remove(m[i].Index, m[i].Length);
-                }
             }
 
             return text;
         }
 
-        private static bool IsValidTag(string tag, string tags)
+        protected static bool IsValidTag(string tag, string tags)
         {
             var allowedTags = tags.Split(',');
             if (tag.Contains("javascript", StringComparison.InvariantCultureIgnoreCase))
@@ -42,9 +56,9 @@ namespace Nop.Core.Html
             if (tag.Contains("onclick", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-            var endchars = new[] { ' ', '>', '/', '\t' };
+            var endChars = new[] { ' ', '>', '/', '\t' };
 
-            var pos = tag.IndexOfAny(endchars, 1);
+            var pos = tag.IndexOfAny(endChars, 1);
             if (pos > 0)
                 tag = tag[0..pos];
             if (tag[0] == '/')
@@ -74,7 +88,7 @@ namespace Nop.Core.Html
         /// <param name="resolveLinks">A value indicating whether to resolve links</param>
         /// <param name="addNoFollowTag">A value indicating whether to add "noFollow" tag</param>
         /// <returns>Formatted text</returns>
-        public static string FormatText(string text, bool stripTags,
+        public virtual string FormatText(string text, bool stripTags,
             bool convertPlainTextToHtml, bool allowHtml,
             bool allowBBCode, bool resolveLinks, bool addNoFollowTag)
         {
@@ -97,7 +111,7 @@ namespace Nop.Core.Html
 
                 if (allowBBCode)
                 {
-                    text = BBCodeHelper.FormatText(text, true, true, true, true, true, true, true);
+                    text = _bbCodeHelper.FormatText(text, true, true, true, true, true, true, true);
                 }
 
                 if (resolveLinks)
@@ -123,7 +137,7 @@ namespace Nop.Core.Html
         /// </summary>
         /// <param name="text">Text</param>
         /// <returns>Formatted text</returns>
-        public static string StripTags(string text)
+        public virtual string StripTags(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
@@ -140,7 +154,7 @@ namespace Nop.Core.Html
         /// </summary>
         /// <param name="text">Text</param>
         /// <returns>Text</returns>
-        public static string ReplaceAnchorTags(string text)
+        public virtual string ReplaceAnchorTags(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
@@ -154,7 +168,7 @@ namespace Nop.Core.Html
         /// </summary>
         /// <param name="text">Text</param>
         /// <returns>Formatted text</returns>
-        public static string ConvertPlainTextToHtml(string text)
+        public virtual string ConvertPlainTextToHtml(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
@@ -175,7 +189,7 @@ namespace Nop.Core.Html
         /// <param name="decode">A value indicating whether to decode text</param>
         /// <param name="replaceAnchorTags">A value indicating whether to replace anchor text (remove a tag from the following URL <a href="http://example.com">Name</a> and output only the string "Name")</param>
         /// <returns>Formatted text</returns>
-        public static string ConvertHtmlToPlainText(string text,
+        public virtual string ConvertHtmlToPlainText(string text,
             bool decode = false, bool replaceAnchorTags = false)
         {
             if (string.IsNullOrEmpty(text))

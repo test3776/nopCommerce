@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Html;
 using Nop.Services.Catalog;
 using Nop.Services.Directory;
+using Nop.Services.Html;
 using Nop.Services.Localization;
 using Nop.Services.Media;
 using Nop.Services.Tax;
@@ -25,6 +25,7 @@ namespace Nop.Services.Orders
         private readonly ICheckoutAttributeService _checkoutAttributeService;
         private readonly ICurrencyService _currencyService;
         private readonly IDownloadService _downloadService;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly ILocalizationService _localizationService;
         private readonly IPriceFormatter _priceFormatter;
         private readonly ITaxService _taxService;
@@ -39,6 +40,7 @@ namespace Nop.Services.Orders
             ICheckoutAttributeService checkoutAttributeService,
             ICurrencyService currencyService,
             IDownloadService downloadService,
+            IHtmlHelper htmlHelper,
             ILocalizationService localizationService,
             IPriceFormatter priceFormatter,
             ITaxService taxService,
@@ -49,6 +51,7 @@ namespace Nop.Services.Orders
             _checkoutAttributeService = checkoutAttributeService;
             _currencyService = currencyService;
             _downloadService = downloadService;
+            _htmlHelper = htmlHelper;
             _localizationService = localizationService;
             _priceFormatter = priceFormatter;
             _taxService = taxService;
@@ -101,7 +104,7 @@ namespace Nop.Services.Orders
                             //encode (if required)
                             if (htmlEncode)
                                 attributeName = WebUtility.HtmlEncode(attributeName);
-                            formattedAttribute = $"{attributeName}: {HtmlHelper.FormatText(valueStr, false, true, false, false, false, false)}";
+                            formattedAttribute = $"{attributeName}: {_htmlHelper.FormatText(valueStr, false, true, false, false, false, false)}";
                             //we never encode multiline textbox input
                         }
                         else if (attribute.AttributeControlType == AttributeControlType.FileUpload)

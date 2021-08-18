@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Html;
 using Nop.Services.Blogs;
 using Nop.Services.Customers;
 using Nop.Services.Helpers;
@@ -19,6 +18,7 @@ using Nop.Web.Areas.Admin.Models.Blogs;
 using Nop.Web.Framework.Extensions;
 using Nop.Web.Framework.Factories;
 using Nop.Web.Framework.Models.Extensions;
+using IHtmlHelper = Nop.Services.Html.IHtmlHelper;
 
 namespace Nop.Web.Areas.Admin.Factories
 {
@@ -34,6 +34,7 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly IBlogService _blogService;
         private readonly ICustomerService _customerService;
         private readonly IDateTimeHelper _dateTimeHelper;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly ILanguageService _languageService;
         private readonly ILocalizationService _localizationService;
         private readonly IStoreMappingSupportedModelFactory _storeMappingSupportedModelFactory;
@@ -49,6 +50,7 @@ namespace Nop.Web.Areas.Admin.Factories
             IBlogService blogService,
             ICustomerService customerService,
             IDateTimeHelper dateTimeHelper,
+            IHtmlHelper htmlHelper,
             ILanguageService languageService,
             ILocalizationService localizationService,
             IStoreMappingSupportedModelFactory storeMappingSupportedModelFactory,
@@ -60,6 +62,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _blogService = blogService;
             _customerService = customerService;
             _dateTimeHelper = dateTimeHelper;
+            _htmlHelper = htmlHelper;
             _languageService = languageService;
             _localizationService = localizationService;
             _storeMappingSupportedModelFactory = storeMappingSupportedModelFactory;
@@ -287,7 +290,7 @@ namespace Nop.Web.Areas.Admin.Factories
                     }
                     //fill in additional values (not existing in the entity)
                     commentModel.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(blogComment.CreatedOnUtc, DateTimeKind.Utc);
-                    commentModel.Comment = HtmlHelper.FormatText(blogComment.CommentText, false, true, false, false, false, false);
+                    commentModel.Comment = _htmlHelper.FormatText(blogComment.CommentText, false, true, false, false, false, false);
                     commentModel.StoreName = storeNames.ContainsKey(blogComment.StoreId) ? storeNames[blogComment.StoreId] : "Deleted";
 
                     return commentModel;

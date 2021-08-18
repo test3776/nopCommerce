@@ -13,6 +13,7 @@ using Nop.Core.Events;
 using Nop.Core.Rss;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
+using Nop.Services.Html;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Messages;
@@ -41,6 +42,7 @@ namespace Nop.Web.Controllers
         private readonly ICustomerActivityService _customerActivityService;
         private readonly ICustomerService _customerService;
         private readonly IEventPublisher _eventPublisher;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly ILocalizationService _localizationService;
         private readonly IOrderService _orderService;
         private readonly IPermissionService _permissionService;
@@ -72,6 +74,7 @@ namespace Nop.Web.Controllers
             ICustomerActivityService customerActivityService,
             ICustomerService customerService,
             IEventPublisher eventPublisher,
+            IHtmlHelper htmlHelper,
             ILocalizationService localizationService,
             IOrderService orderService,
             IPermissionService permissionService,
@@ -99,6 +102,7 @@ namespace Nop.Web.Controllers
             _customerActivityService = customerActivityService;
             _customerService = customerService;
             _eventPublisher = eventPublisher;
+            _htmlHelper = htmlHelper;
             _localizationService = localizationService;
             _orderService = orderService;
             _permissionService = permissionService;
@@ -605,7 +609,7 @@ namespace Nop.Web.Controllers
                 await _workflowMessageService.SendProductEmailAFriendMessageAsync(customer,
                         (await _workContext.GetWorkingLanguageAsync()).Id, product,
                         model.YourEmailAddress, model.FriendEmail,
-                        Core.Html.HtmlHelper.FormatText(model.PersonalMessage, false, true, false, false, false, false));
+                        _htmlHelper.FormatText(model.PersonalMessage, false, true, false, false, false, false));
 
                 model = await _productModelFactory.PrepareProductEmailAFriendModelAsync(model, product, true);
                 model.SuccessfullySent = true;

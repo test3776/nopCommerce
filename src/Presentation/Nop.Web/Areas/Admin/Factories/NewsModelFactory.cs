@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.News;
-using Nop.Core.Html;
 using Nop.Services.Customers;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
@@ -17,6 +16,7 @@ using Nop.Web.Areas.Admin.Models.News;
 using Nop.Web.Framework.Extensions;
 using Nop.Web.Framework.Factories;
 using Nop.Web.Framework.Models.Extensions;
+using IHtmlHelper = Nop.Services.Html.IHtmlHelper;
 
 namespace Nop.Web.Areas.Admin.Factories
 {
@@ -31,6 +31,7 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly IBaseAdminModelFactory _baseAdminModelFactory;
         private readonly ICustomerService _customerService;
         private readonly IDateTimeHelper _dateTimeHelper;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly ILanguageService _languageService;
         private readonly ILocalizationService _localizationService;
         private readonly INewsService _newsService;
@@ -46,6 +47,7 @@ namespace Nop.Web.Areas.Admin.Factories
             IBaseAdminModelFactory baseAdminModelFactory,
             ICustomerService customerService,
             IDateTimeHelper dateTimeHelper,
+            IHtmlHelper htmlHelper,
             ILanguageService languageService,
             ILocalizationService localizationService,
             INewsService newsService,
@@ -57,6 +59,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _customerService = customerService;
             _baseAdminModelFactory = baseAdminModelFactory;
             _dateTimeHelper = dateTimeHelper;
+            _htmlHelper = htmlHelper;
             _languageService = languageService;
             _localizationService = localizationService;
             _newsService = newsService;
@@ -274,7 +277,7 @@ namespace Nop.Web.Areas.Admin.Factories
                             : await _localizationService.GetResourceAsync("Admin.Customers.Guest");
                     }
 
-                    commentModel.CommentText = HtmlHelper.FormatText(newsComment.CommentText, false, true, false, false, false, false);
+                    commentModel.CommentText = _htmlHelper.FormatText(newsComment.CommentText, false, true, false, false, false, false);
                     commentModel.StoreName = storeNames.ContainsKey(newsComment.StoreId) ? storeNames[newsComment.StoreId] : "Deleted";
 
                     return commentModel;

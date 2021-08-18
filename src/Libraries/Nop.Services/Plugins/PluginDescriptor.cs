@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
+using Nop.Core;
 using Nop.Core.Infrastructure;
 
 namespace Nop.Services.Plugins
@@ -101,7 +102,7 @@ namespace Nop.Services.Plugins
         /// </summary>
         public virtual void Save()
         {
-            var fileProvider = EngineContext.Current.Resolve<INopFileProvider>();
+            var fileProvider = CommonHelper.DefaultFileProvider;
 
             //get the description file path
             if (OriginalAssemblyFile == null)

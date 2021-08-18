@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Html;
+using Nop.Services.Html;
 using Nop.Services.Localization;
 
 namespace Nop.Services.Customers
@@ -17,6 +17,7 @@ namespace Nop.Services.Customers
 
         private readonly ICustomerAttributeParser _customerAttributeParser;
         private readonly ICustomerAttributeService _customerAttributeService;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly ILocalizationService _localizationService;
         private readonly IWorkContext _workContext;
 
@@ -26,11 +27,13 @@ namespace Nop.Services.Customers
 
         public CustomerAttributeFormatter(ICustomerAttributeParser customerAttributeParser,
             ICustomerAttributeService customerAttributeService,
+            IHtmlHelper htmlHelper,
             ILocalizationService localizationService,
             IWorkContext workContext)
         {
             _customerAttributeParser = customerAttributeParser;
             _customerAttributeService = customerAttributeService;
+            _htmlHelper = htmlHelper;
             _localizationService = localizationService;
             _workContext = workContext;
         }
@@ -72,7 +75,7 @@ namespace Nop.Services.Customers
                             //encode (if required)
                             if (htmlEncode)
                                 attributeName = WebUtility.HtmlEncode(attributeName);
-                            formattedAttribute = $"{attributeName}: {HtmlHelper.FormatText(valueStr, false, true, false, false, false, false)}";
+                            formattedAttribute = $"{attributeName}: {_htmlHelper.FormatText(valueStr, false, true, false, false, false, false)}";
                             //we never encode multiline textbox input
                         }
                         else if (attribute.AttributeControlType == AttributeControlType.FileUpload)
