@@ -10,7 +10,6 @@ using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Http.Extensions;
-using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
 
@@ -26,6 +25,7 @@ namespace Nop.Services.Payments
         private readonly ICustomerService _customerService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPaymentPluginManager _paymentPluginManager;
+        private readonly IPriceCalculationService _priceCalculationService;
         private readonly PaymentSettings _paymentSettings;
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
@@ -36,12 +36,14 @@ namespace Nop.Services.Payments
         public PaymentService(ICustomerService customerService,
             IHttpContextAccessor httpContextAccessor,
             IPaymentPluginManager paymentPluginManager,
+            IPriceCalculationService priceCalculationService,
             PaymentSettings paymentSettings,
             ShoppingCartSettings shoppingCartSettings)
         {
             _customerService = customerService;
             _httpContextAccessor = httpContextAccessor;
             _paymentPluginManager = paymentPluginManager;
+            _priceCalculationService = priceCalculationService;
             _paymentSettings = paymentSettings;
             _shoppingCartSettings = shoppingCartSettings;
         }
@@ -165,8 +167,7 @@ namespace Nop.Services.Payments
             if (!_shoppingCartSettings.RoundPricesDuringCalculation)
                 return result;
 
-            var priceCalculationService = EngineContext.Current.Resolve<IPriceCalculationService>();
-            result = await priceCalculationService.RoundPriceAsync(result);
+            result = await _priceCalculationService.RoundPriceAsync(result);
 
             return result;
         }
