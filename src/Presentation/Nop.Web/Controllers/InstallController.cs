@@ -28,7 +28,7 @@ namespace Nop.Web.Controllers
         private readonly AppSettings _appSettings;
         private readonly Lazy<IInstallationLocalizationService> _locService;
         private readonly Lazy<IInstallationService> _installationService;
-        private readonly Lazy<INopFileProvider> _fileProvider;
+        private readonly INopFileProvider _fileProvider;
         private readonly Lazy<IPermissionService> _permissionService;
         private readonly Lazy<IPluginService> _pluginService;
         private readonly Lazy<IStaticCacheManager> _staticCacheManager;
@@ -43,7 +43,7 @@ namespace Nop.Web.Controllers
         public InstallController(AppSettings appSettings,
             Lazy<IInstallationLocalizationService> locService,
             Lazy<IInstallationService> installationService,
-            Lazy<INopFileProvider> fileProvider,
+            INopFileProvider fileProvider,
             Lazy<IPermissionService> permissionService,
             Lazy<IPluginService> pluginService,
             Lazy<IStaticCacheManager> staticCacheManager,
@@ -171,18 +171,18 @@ namespace Nop.Web.Controllers
             //the identity will be the anonymous user (typically IUSR_MACHINENAME) or the authenticated request user.
 
             //validate permissions
-            var dirsToCheck = FilePermissionHelper.GetDirectoriesWrite();
+            var dirsToCheck = _fileProvider.GetDirectoriesWrite();
             foreach (var dir in dirsToCheck)
-                if (!FilePermissionHelper.CheckPermissions(dir, false, true, true, false))
+                if (!FilePermissionHelper.CheckPermissions(_fileProvider, dir, false, true, true, false))
                     ModelState.AddModelError(string.Empty, string.Format(_locService.Value.GetResource("ConfigureDirectoryPermissions"), CurrentOSUser.FullName, dir));
 
-            var filesToCheck = FilePermissionHelper.GetFilesWrite();
+            var filesToCheck = _fileProvider.GetFilesWrite();
             foreach (var file in filesToCheck)
             {
-                if (!_fileProvider.Value.FileExists(file))
+                if (!_fileProvider.FileExists(file))
                     continue;
 
-                if (!FilePermissionHelper.CheckPermissions(file, false, true, true, true))
+                if (!FilePermissionHelper.CheckPermissions(_fileProvider, file, false, true, true, true))
                     ModelState.AddModelError(string.Empty, string.Format(_locService.Value.GetResource("ConfigureFilePermissions"), CurrentOSUser.FullName, file));
             }
 
@@ -202,7 +202,7 @@ namespace Nop.Web.Controllers
                 {
                     DataProvider = model.DataProvider,
                     ConnectionString = connectionString
-                }, _fileProvider.Value);
+                }, _fileProvider);
 
                 await DataSettingsManager.LoadSettingsAsync(reloadSettings: true);
 
@@ -308,7 +308,7 @@ namespace Nop.Web.Controllers
                 await _staticCacheManager.Value.ClearAsync();
 
                 //clear provider settings if something got wrong
-                await DataSettingsManager.SaveSettingsAsync(new DataSettings(), _fileProvider.Value);
+                await DataSettingsManager.SaveSettingsAsync(new DataSettings(), _fileProvider);
 
                 ModelState.AddModelError(string.Empty, string.Format(_locService.Value.GetResource("SetupFailed"), exception.Message));
             }
