@@ -1072,8 +1072,7 @@ namespace Nop.Services.Messages
             var trackingNumberUrl = string.Empty;
             if (!string.IsNullOrEmpty(shipment.TrackingNumber))
             {
-                var shipmentService = EngineContext.Current.Resolve<IShipmentService>();
-                var shipmentTracker = await shipmentService.GetShipmentTrackerAsync(shipment);
+                var shipmentTracker = await _shipmentService.GetShipmentTrackerAsync(shipment);
                 if (shipmentTracker != null)
                     trackingNumberUrl = await shipmentTracker.GetUrlAsync(shipment.TrackingNumber);
             }
