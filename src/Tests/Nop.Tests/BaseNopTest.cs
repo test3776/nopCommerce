@@ -52,6 +52,7 @@ using Nop.Services.ExportImport;
 using Nop.Services.Forums;
 using Nop.Services.Gdpr;
 using Nop.Services.Helpers;
+using Nop.Services.Html;
 using Nop.Services.Installation;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
@@ -81,6 +82,7 @@ using Nop.Web.Framework.Themes;
 using Nop.Web.Framework.UI;
 using Nop.Web.Infrastructure.Installation;
 using SkiaSharp;
+using HtmlHelper = Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper;
 using IAuthenticationService = Nop.Services.Authentication.IAuthenticationService;
 using Task = System.Threading.Tasks.Task;
 
@@ -195,6 +197,7 @@ namespace Nop.Tests
             services.AddSingleton(tempDataDictionaryFactory.Object);
 
             services.AddSingleton<ITypeFinder>(typeFinder);
+            Singleton<ITypeFinder>.Instance = typeFinder;
 
             //file provider
             services.AddTransient<INopFileProvider, NopFileProvider>();
@@ -321,6 +324,8 @@ namespace Nop.Tests
             services.AddTransient<IUploadService, UploadService>();
             services.AddTransient<IThemeProvider, ThemeProvider>();
             services.AddTransient<IExternalAuthenticationService, ExternalAuthenticationService>();
+            services.AddScoped<IBBCodeHelper, BBCodeHelper>();
+            services.AddScoped<IHtmlHelper, Services.Html.HtmlHelper>();
 
             //slug route transformer
             services.AddSingleton<IReviewTypeService, ReviewTypeService>();
@@ -376,6 +381,7 @@ namespace Nop.Tests
                         .ScanIn(mAssemblies).For.Migrations());
 
             services.AddTransient<IStoreContext, WebStoreContext>();
+            services.AddTransient<Lazy<IStoreContext>>();
             services.AddTransient<IWorkContext, WebWorkContext>();
             services.AddTransient<IThemeContext, ThemeContext>();
 
