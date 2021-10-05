@@ -25,6 +25,7 @@ using Nop.Services.Authentication;
 using Nop.Services.Authentication.External;
 using Nop.Services.Common;
 using Nop.Services.Security;
+using Nop.Web.Framework.Configuration;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Framework.Mvc.Routing;
 using Nop.Web.Framework.Security.Captcha;
@@ -393,23 +394,25 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
         public static void AddNopWebOptimizer(this IServiceCollection services)
         {
             var appSettings = Singleton<AppSettings>.Instance;
+            var cssBundling = appSettings.Get<WebOptimizerConfig>().EnableCssBundling;
+            var jsBundling = appSettings.Get<WebOptimizerConfig>().EnableJsBundling;
 
             //add minification & bundling
             var cssSettings = new CssBundlingSettings {
-                Minify = appSettings.CommonConfig.EnableCssBundling
+                Minify = cssBundling
             };
 
             var codeSettings = new CodeBundlingSettings
             {
-                Minify = appSettings.CommonConfig.EnableJsBundling
+                Minify = jsBundling
             };
 
             services.AddWebOptimizer(null, cssSettings, codeSettings, pipeline => 
             {
-                if (appSettings.CommonConfig.EnableCssBundling)
+                if (cssBundling)
                     pipeline.MinifyCssFiles();
 
-                if (appSettings.CommonConfig.EnableJsBundling)
+                if (jsBundling)
                     pipeline.MinifyJsFiles();
             });
         }
