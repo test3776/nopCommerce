@@ -94,6 +94,12 @@ namespace Nop.Web.Framework.Migrations.UpgradeTo450
                 ["Admin.System.Warnings.PluginNotInstalled.HelpText"] = "You may delete the plugins you don't use in order to increase startup time",
 
                 ["Admin.Catalog.Products.ProductAttributes.Attributes.Values.AlreadyExistsInCombination"] = "This attribute value cannot be removed because it is already used in this combination: {0}.",
+
+                ["Admin.Configuration.AppSettings.WebOptimizer"] = "Bundling & minimization",
+                ["Admin.Configuration.AppSettings.WebOptimizer.EnableDiskCache"] = "Disk cache",
+                ["Admin.Configuration.AppSettings.WebOptimizer.EnableDiskCache.Hint"] = "Enable to store assets on disk",
+                ["Admin.Configuration.AppSettings.WebOptimizer.CacheDirectory"] = "Cache directory",
+                ["Admin.Configuration.AppSettings.WebOptimizer.CacheDirectory.Hint"] = "Path of the directory where assets will be stored if disk cache is enabled",
             }, languageId).Wait();
 
             // rename locales
