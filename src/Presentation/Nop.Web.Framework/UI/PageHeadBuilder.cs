@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Hosting;
 using Nop.Core;
 using Nop.Core.Domain.Seo;
-using Nop.Services.Seo;
 
 namespace Nop.Web.Framework.UI
 {
@@ -389,7 +388,7 @@ namespace Nop.Web.Framework.UI
             });
         }
 
-                /// <summary>
+        /// <summary>
         /// Generate all CSS parts
         /// </summary>
         /// <param name="location">A location of the script element</param>
