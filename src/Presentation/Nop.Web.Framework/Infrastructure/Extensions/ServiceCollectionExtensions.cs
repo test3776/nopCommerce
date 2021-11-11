@@ -32,7 +32,7 @@ using Nop.Web.Framework.Security.Captcha;
 using Nop.Web.Framework.Themes;
 using Nop.Web.Framework.Validators;
 using StackExchange.Profiling.Storage;
-using WebMarkupMin.AspNetCore5;
+using WebMarkupMin.AspNetCore6;
 using WebMarkupMin.NUglify;
 
 namespace Nop.Web.Framework.Infrastructure.Extensions
