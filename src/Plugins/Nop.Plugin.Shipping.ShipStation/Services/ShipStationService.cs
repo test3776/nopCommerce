@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -103,12 +104,10 @@ namespace Nop.Plugin.Shipping.ShipStation.Services
         /// <returns>A task that represents the asynchronous operation</returns>
         protected virtual async Task<string> SendGetRequestAsync(string apiUrl)
         {
-            var request = WebRequest.Create(apiUrl);
+            using var handler = new HttpClientHandler { Credentials = new NetworkCredential(_shipStationSettings.ApiKey, _shipStationSettings.ApiSecret) };
+            using var client = new HttpClient(handler);
+            using var rs = await client.GetStreamAsync(apiUrl);
 
-            request.Credentials = new NetworkCredential(_shipStationSettings.ApiKey, _shipStationSettings.ApiSecret);
-            var resp = await request.GetResponseAsync();
-
-            await using var rs = resp.GetResponseStream();
             if (rs == null) return string.Empty;
             using var sr = new StreamReader(rs);
 
@@ -257,15 +256,13 @@ namespace Nop.Plugin.Shipping.ShipStation.Services
                     Width = width
                 };
             }
-
-            using var client = new WebClient
-            {
-                Credentials = new NetworkCredential(_shipStationSettings.ApiKey, _shipStationSettings.ApiSecret)
-            };
-
-            client.Headers.Add("Content-Type", CONTENT_TYPE);
-
-            var data = client.UploadString($"{API_URL}{LIST_RATES_CMD}", JsonConvert.SerializeObject(postData));
+            
+            using var handler = new HttpClientHandler { Credentials = new NetworkCredential(_shipStationSettings.ApiKey, _shipStationSettings.ApiSecret) };
+            using var client = new HttpClient(handler);
+            
+            client.DefaultRequestHeaders.Add("Content-Type", CONTENT_TYPE);
+            var responseData = await client.PostAsync($"{API_URL}{LIST_RATES_CMD}", new StringContent(JsonConvert.SerializeObject(postData)));
+            var data = await responseData.Content.ReadAsStringAsync();
 
             return (await TryGetError(data)) ? new List<ShipStationServiceRate>() : JsonConvert.DeserializeObject<List<ShipStationServiceRate>>(data);
         }

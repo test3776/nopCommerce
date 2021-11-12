@@ -105,7 +105,7 @@ namespace Nop.Web.Framework.UI
 
             //calculate hash
             var hash = "";
-            using (SHA256 sha = new SHA256Managed())
+            using (var sha = SHA256.Create())
             {
                 // string concatenation
                 var hashInput = "";
