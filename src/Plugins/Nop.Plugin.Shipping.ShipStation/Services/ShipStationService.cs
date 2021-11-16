@@ -33,8 +33,8 @@ namespace Nop.Plugin.Shipping.ShipStation.Services
         #region constants
 
         private const string API_URL = "https://ssapi.shipstation.com/";
-        private readonly CacheKey _carriersCacheKey = new CacheKey("Nop.plugins.shipping.shipstation.carrierscachekey");
-        private readonly CacheKey _serviceCacheKey = new CacheKey("Nop.plugins.shipping.shipstation.servicecachekey.{0}");
+        private readonly CacheKey _carriersCacheKey = new("Nop.plugins.shipping.shipstation.carrierscachekey");
+        private readonly CacheKey _serviceCacheKey = new("Nop.plugins.shipping.shipstation.servicecachekey.{0}");
 
         private const string CONTENT_TYPE = "application/json";
         private const string DATE_FORMAT = "MM/dd/yyyy HH:mm";
